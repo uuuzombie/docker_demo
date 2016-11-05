@@ -1,0 +1,9 @@
+Package: sps
+Version: 1.0.0
+Section: security
+Priority: optional
+Architecture: amd64
+Maintainer: skyguard<skyguard@skyguard.com.cn>
+Description: skyguard sps software
+Depends: postgresql, rsyslog-pgsql, sudo, fontconfig, xfonts-utils, tomcat, apache2, tomcat1, postfix
+

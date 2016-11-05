@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# post install process
+is_inst_jre=`awk 'NR==1 {print $1}' jre_check.cfg`
+echo "jre " $is_inst_jre
+
+filepath=$(pwd)
+echo 'current folder=' $filepath
+
+# check jre version and install if not installed or incorrect version
+if [ "$is_inst_jre" != "1" ]; then
+    mkdir /usr/skyguardtools
+    mkdir /opt/skyguard
+    tar zxvf /skyguard-jre/jdk* -C /usr/skyguardtools  2>&1
+    mv /usr/skyguardtools/jdk* /usr/skyguardtools/java
+    # update profile
+    cat >> /etc/profile << EFF
+
+JAVA_HOME=/usr/skyguardtools/java
+JRE_HOME=\$JAVA_HOME/jre
+CLASSPATH=:\$JAVA_HOME/lib:\$JRE_HOME/lib
+PATH=\$JAVA_HOME/bin:\$JRE_HOME/bin:\$PATH
+export JAVA_HOME JRE_HOME CLASSPATH PATH
+EFF
+
+    . /etc/profile
+	export JAVA_HOME JRE_HOME CLASSPATH PATH
+	
+echo "test jre"
+    # check jre status
+    java -version
+    if [ $? != 0 ]; then
+        echo "install JRE failure"
+    else
+        echo "install JRE succeed"
+    fi
+
+else
+    echo "java has correct version"
+fi

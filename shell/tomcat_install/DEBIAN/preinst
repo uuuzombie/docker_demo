@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# check tomcat version and output to tomcat_check.cfg file
+# install_tomcat=`echo ${!TOMCAT*}`
+install_tomcat=`grep 'TOMCAT' /etc/profile`
+if [ "$install_tomcat" = "" ]; then
+    echo -1 > tomcat_check.cfg
+else
+    # tomcat installed, check version and get install path
+    path_tomcat=`grep 'TOMCAT' /etc/profile 2>&1 | head -n 1 | awk -F '=' '{print $2}'`
+    version_tomcat=`bash $path_tomcat"/bin/version.sh" 2>&1 | head -n 8 | tail -n +8 | awk '{print $3}'`
+    ver_tom_req='8'
+    ver_tom_match=`expr $version_tomcat : $ver_tom_req`
+    if [ $ver_tom_match -eq 1 ]; then
+        # output 1 to file if version is correct
+        echo 1 > tomcat_check.cfg
+        # ouput tomcat install path into file if version is correct????
+        echo $path_tomcat >> tomcat_check.cfg
+    else 
+        # output -2 to file if version is incorrect
+        echo -2 > tomcat_check.cfg
+    fi
+fi

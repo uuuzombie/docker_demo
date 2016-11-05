@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# check jre version and install it if not exists
+java -version > /dev/null 2>&1
+
+if [ $? -eq 0 ]; then
+    version_java=`java -version 2>&1 | head -n 1 | awk -F '"' '{print $2}'`
+    version='1.8'
+    version_match=`expr $version_java : $version`
+    if [ $version_match -eq 3 ]; then
+        # output 1 if version is correct
+        echo 1 > jre_check.cfg
+    else
+        # output -2 if version is incorrect
+        echo -2 > jre_check.cfg
+    fi
+else
+    # output -1 if not installed jre
+    echo -1 > jre_check.cfg
+fi
+

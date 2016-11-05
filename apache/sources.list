@@ -1,0 +1,13 @@
+
+
+#deb http://mirrors.skyguardmis.com/debian wheezy main contrib
+deb http://mirrors.163.com/debian/ wheezy main contrib
+deb-src http://mirrors.163.com/debian/ wheezy main contrib
+
+# 163
+deb http://mirrors.163.com/debian/ wheezy-updates main contrib
+deb-src http://mirrors.163.com/debian/ wheezy-updates main contrib
+
+
+#deb http://security.debian.org/ wheezy/updates main contrib
+#deb-src http://security.debian.org/ wheezy/updates main contrib

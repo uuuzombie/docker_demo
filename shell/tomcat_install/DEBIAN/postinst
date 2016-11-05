@@ -1,0 +1,81 @@
+#!/bin/bash
+
+# post install configuration file
+is_inst_tomcat=`awk 'NR==1 {print $1}' tomcat_check.cfg`
+echo "code for tomcat install status: " $is_inst_tomcat
+
+filepath=$(pwd)
+echo 'current folder=' $filepath
+
+# install tomcat if not exists or version is incorrect
+optFolder='/opt'
+rootPath='/opt/skyguard'
+tomcatVersion='8.0.24'
+tomcatFolderName='tomcat'
+tomcatPath=$rootPath/$tomcatFolderName
+
+sourceFolder='/skyguard-tomcat'
+tomcatTarFile=$sourceFolder/tomcat.tar.gz
+tomcatuser=tomcat
+tomcatgroup=tomcat
+apacheuser=www-data
+
+echo "tomcat installer folder = $sourceFolder"
+echo "tomcat installer file = $tomcatTarFile"
+
+# check if /opt/skyguard folder exists
+
+if [ ! -d $optFolder ]; then
+    mkdir $optFolder
+fi
+
+if [ ! -d $rootPath ]; then
+    mkdir $rootPath
+fi
+
+if [ ! -d $tomcatPath ]; then
+    tar -zxvf $tomcatTarFile -C $rootPath 2>&1
+
+	# create tomcat group if not exists
+	egrep "^$tomcatgroup" /etc/group >& /dev/null
+	if [ $? -ne 0 ]; then
+		groupadd $tomcatgroup
+	fi
+
+	# create tomcat user if not exists, add tomcat user to tomcat and adm group
+	egrep "^$tomcatuser" /etc/passwd >& /dev/null
+	if [ $? -ne 0 ]; then
+		useradd $tomcatuser -g $tomcatgroup 
+		usermod -a -G adm $tomcatuser
+	fi
+
+	# Change the owner and group of tomcat folder to tomcat:tomcat
+	chown -R tomcat:tomcat $tomcatPath
+
+	# check if apache user exists or not, add it to tomcat group if exists
+	egrep "^$apacheuser" /etc/passwd >& /dev/null
+	if [ $? -eq 0 ]; then
+		usermod -a -G $tomcatgroup $apacheuser 
+	fi
+	
+	# setup the auto start after system boot
+	cp $sourceFolder/tomcat.sh /etc/init.d/tomcat
+	chmod 755 /etc/init.d/tomcat
+	insserv -v -d /etc/init.d/tomcat
+
+    cat >> /etc/profile << LJS
+CATALINA_BASE=/opt/skyguard/tomcat
+CATALINA_HOME=/opt/skyguard/tomcat
+TOMCAT_HOME=/opt/skyguard/tomcat
+PATH=\$PATH:\$TOMCAT_HOME/bin
+export TOMCAT_HOME CATALINA_BASE CATALINA_HOME PATH
+LJS
+
+	export TOMCAT_HOME CATALINA_BASE CATALINA_HOME PATH
+    echo "install tomcat succeed"
+fi
+
+# startup tomcat
+# echo "startup tomcat..."
+# /etc/init.d/tomcat start
+

@@ -1,0 +1,8 @@
+Package: tomcat
+Version: 8.0.24
+Section: application
+Priority: optional
+Architecture: amd64
+Maintainer: skyguard<skyguard@skyguard.com.cn>
+Description: skyguard sps software - tomcat
+Depends: jre
