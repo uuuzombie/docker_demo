@@ -39,6 +39,7 @@ Thumbs.db
 *.crt
 *.key
 *.keystore
+*.truststore
 
 
 rebel.xml
