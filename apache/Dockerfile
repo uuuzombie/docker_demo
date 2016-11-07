@@ -61,7 +61,7 @@ ENV APACHE_LOG_DIR      /var/log/apache2
 
 
 # Expose ourselves
-EXPOSE 8443
+EXPOSE 8443 8447
 
 #ADD run.sh /run.sh
 #RUN chmod 755 /*.sh
