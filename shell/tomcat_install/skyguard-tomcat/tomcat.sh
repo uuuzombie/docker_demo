@@ -2,8 +2,6 @@
 #
 # /etc/init.d/tomcat7 -- startup script for the Tomcat 8 servlet engine
 #
-# Written by Qijun based on the script of tomcat7 of debian
-#
 ### BEGIN INIT INFO
 # Provides:          tomcat
 # Required-Start:    $local_fs $remote_fs $network postgresql

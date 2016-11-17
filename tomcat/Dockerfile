@@ -1,4 +1,5 @@
-FROM 172.22.111.199:80/sps_demo/debian:7.10
+FROM debian:7.10
+#FROM 172.22.111.199:80/sps_demo/debian:7.10
 MAINTAINER grong@skygurad.com
 
 # apt
@@ -11,15 +12,16 @@ RUN echo "Asia/Shanghai" > /etc/timezone && dpkg-reconfigure -f noninteractive t
 
 
 # install jdk & tomcat
-RUN mkdir -p /opt/sps
-COPY java_1.8.0_45.deb /opt/sps
-RUN dpkg -i /opt/sps/java_1.8.0_45.deb
-RUN rm -rf /skyguard-jre
 
-COPY tomcat_8.0.24.deb /opt/sps
-RUN dpkg -i /opt/sps/tomcat_8.0.24.deb
-RUN rm -rf /skyguard-tomcat
-RUN rm -rf /opt/sps
+
+RUN mkdir -p /opt/sps
+COPY deb_files/ /opt/sps
+RUN dpkg -i /opt/sps/java_1.8.0_45.deb && \
+    dpkg -i /opt/sps/tomcat_8.0.24.deb && \
+	rm -rf /skyguard-jre && \
+	rm -rf /skyguard-tomcat && \
+	rm -rf /opt/sps
+
 
 # environment
 ENV JAVA_HOME /usr/skyguardtools/java
@@ -37,14 +39,16 @@ COPY conf/ /opt/skyguard/tomcat/conf/
 RUN mkdir -p /usr/share/fonts/myfonts
 COPY simsun.ttc /usr/share/fonts/myfonts
 WORKDIR /usr/share/fonts/myfonts
-RUN mkfontscale
-RUN mkfontdir
+RUN mkfontscale && mkfontdir
 
 RUN mkdir -p /opt/skyguard/sps/setup
 COPY skyguardsetup.exe /opt/skyguard/sps/setup
 COPY conf/ssl /opt/skyguard/sps/ssl
 
-RUN chown -R tomcat:tomcat /opt/skyguard/tomcat
-RUN chown -R tomcat:tomcat /opt/skyguard/sps
+RUN chown -R tomcat:tomcat /opt/skyguard/tomcat && \
+    chown -R tomcat:tomcat /opt/skyguard/sps
 
 WORKDIR /opt/skyguard/tomcat
+
+#
+VOLUME /opt/skyguard/tomcat/webapps

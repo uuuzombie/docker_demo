@@ -14,40 +14,32 @@ RUN echo "Asia/Shanghai" > /etc/timezone && dpkg-reconfigure -f noninteractive t
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # conf
-RUN rm -rf /etc/apache2/ports.conf
+RUN rm -rf /etc/apache2/ports.conf && \
+	mkdir -p /opt/skyguard/tomcat/webapps/webManager && \
+	mkdir -p /opt/skyguard/sps
 COPY conf/ports.conf /etc/apache2/
-
-
-RUN mkdir -p /opt/skyguard/tomcat/webapps/webManager
-RUN mkdir -p /opt/skyguard/sps
 
 # Remove default VirtualHost
 RUN rm -rf /etc/apache2/sites-enabled/000-default /var/www/html
 
 COPY sites-enabled /etc/apache2/sites-enabled
-
 COPY conf/ssl /opt/skyguard/sps/ssl
 
-RUN ln -s /etc/apache2/mods-available/proxy_ajp.load /etc/apache2/mods-enabled/
-RUN ln -s /etc/apache2/mods-available/proxy.load /etc/apache2/mods-enabled/
-RUN ln -s /etc/apache2/mods-available/proxy.conf /etc/apache2/mods-enabled/
+RUN ln -s /etc/apache2/mods-available/proxy_ajp.load /etc/apache2/mods-enabled/ && \
+	ln -s /etc/apache2/mods-available/proxy.load /etc/apache2/mods-enabled/ && \
+	ln -s /etc/apache2/mods-available/proxy.conf /etc/apache2/mods-enabled/
 
 # Enable rewrite, ssl module
-RUN a2enmod rewrite
-RUN a2enmod ssl
-
+RUN a2enmod rewrite && a2enmod ssl
 
 # install front and resources
 RUN mkdir -p /opt/sps
 
-# resources_1.1-1011_amd64.deb
 COPY resources.deb /opt/sps
 COPY front.deb /opt/sps
-
-RUN dpkg -i /opt/sps/resources.deb
-RUN dpkg -i /opt/sps/front.deb
-
-RUN rm -rf /opt/sps
+RUN dpkg -i /opt/sps/resources.deb && \
+	dpkg -i /opt/sps/front.deb && \
+	rm -rf /opt/sps
 
 
 # Configure Apache2
