@@ -37,7 +37,7 @@ ENV CLASSPATH /usr/skyguardtools/java/lib:/usr/skyguardtools/java/jre/lib
 COPY conf/ /opt/skyguard/tomcat/conf/
 
 RUN mkdir -p /usr/share/fonts/myfonts
-COPY simsun.ttc /usr/share/fonts/myfonts
+COPY conf/simsun.ttc /usr/share/fonts/myfonts
 WORKDIR /usr/share/fonts/myfonts
 RUN mkfontscale && mkfontdir
 
@@ -47,6 +47,11 @@ COPY conf/ssl /opt/skyguard/sps/ssl
 
 RUN chown -R tomcat:tomcat /opt/skyguard/tomcat && \
     chown -R tomcat:tomcat /opt/skyguard/sps
+
+
+# not work
+# use docker run -it --add-host sky.com:172.21.23.140
+#RUN echo "172.21.23.140    sky.com" >> /etc/hosts
 
 WORKDIR /opt/skyguard/tomcat
 
