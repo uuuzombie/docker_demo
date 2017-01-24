@@ -1,0 +1,8 @@
+Package: sps
+Version: 1.0.0
+Section: security
+Priority: optional
+Architecture: amd64
+Maintainer: rg<skyguard@skyguard.com.cn>
+Description: css, js and images
+Depends: sudo
